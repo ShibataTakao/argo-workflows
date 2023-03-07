@@ -128,7 +128,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	cancel, controller := newController(wf)
@@ -162,7 +162,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	cancel, controller := newController(wf)
@@ -195,7 +195,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	cancel, controller := newController(wfv1.MustUnmarshalWorkflow(`
@@ -240,7 +240,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	cancel, controller := newController(wf)
@@ -274,7 +274,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	cancel, controller := newController(wf)
@@ -944,10 +944,10 @@ metadata:
   selfLink: /apis/argoproj.io/v1alpha1/namespaces/argo/workflows/retry-backoff-s69z6
   uid: 110dbef4-c54b-4963-9739-03e9878810d9
 spec:
-  
+
   entrypoint: retry-backoff
   templates:
-  - 
+  -
     container:
       args:
       - import random; import sys; exit_code = random.choice([1, 1]); sys.exit(exit_code)
@@ -3708,10 +3708,10 @@ func TestPDBCreation(t *testing.T) {
 	ctx := context.Background()
 	woc := newWorkflowOperationCtx(wf, controller)
 	woc.operate(ctx)
-	pdb, _ := controller.kubeclientset.PolicyV1beta1().PodDisruptionBudgets("").Get(ctx, woc.wf.Name, metav1.GetOptions{})
+	pdb, _ := controller.kubeclientset.PolicyV1().PodDisruptionBudgets("").Get(ctx, woc.wf.Name, metav1.GetOptions{})
 	assert.Equal(t, pdb.Name, wf.Name)
 	woc.markWorkflowSuccess(ctx)
-	_, err := controller.kubeclientset.PolicyV1beta1().PodDisruptionBudgets("").Get(ctx, woc.wf.Name, metav1.GetOptions{})
+	_, err := controller.kubeclientset.PolicyV1().PodDisruptionBudgets("").Get(ctx, woc.wf.Name, metav1.GetOptions{})
 	assert.EqualError(t, err, "poddisruptionbudgets.policy \"my-pdb-wf\" not found")
 }
 
@@ -3724,7 +3724,7 @@ func TestPDBCreationRaceDelete(t *testing.T) {
 	woc := newWorkflowOperationCtx(wf, controller)
 	woc.operate(ctx)
 	makePodsPhase(ctx, woc, apiv1.PodSucceeded)
-	err := controller.kubeclientset.PolicyV1beta1().PodDisruptionBudgets("").Delete(ctx, woc.wf.Name, metav1.DeleteOptions{})
+	err := controller.kubeclientset.PolicyV1().PodDisruptionBudgets("").Delete(ctx, woc.wf.Name, metav1.DeleteOptions{})
 	assert.NoError(t, err)
 	woc = newWorkflowOperationCtx(woc.wf, controller)
 	woc.operate(ctx)
@@ -3852,19 +3852,19 @@ kind: Workflow
 metadata:
   name: daemon-step-dvbnn
 spec:
-  
+
   entrypoint: daemon-example
   templates:
-  - 
+  -
     inputs: {}
     metadata: {}
     name: daemon-example
     outputs: {}
     steps:
-    - - 
+    - -
         name: influx
         template: influxdb
-  - 
+  -
     container:
       image: influxdb:1.2
       name: ""
@@ -4110,19 +4110,19 @@ kind: Workflow
 metadata:
   name: global-outputs-bg7gl
 spec:
-  
+
   entrypoint: generate-globals
   templates:
-  - 
+  -
     inputs: {}
     metadata: {}
     name: generate-globals
     outputs: {}
     steps:
-    - - 
+    - -
         name: generate
         template: nested-global-output-generation
-  - 
+  -
     container:
       args:
       - sleep 1; echo -n hello world > /tmp/hello_world.txt
@@ -4140,7 +4140,7 @@ spec:
       - name: hello-param
         valueFrom:
           path: /tmp/hello_world.txt
-  - 
+  -
     inputs: {}
     metadata: {}
     name: nested-global-output-generation
@@ -4151,7 +4151,7 @@ spec:
         valueFrom:
           parameter: '{{steps.generate-output.outputs.parameters.hello-param}}'
     steps:
-    - - 
+    - -
         name: generate-output
         template: output-generation
 status:
@@ -4304,7 +4304,7 @@ spec:
     - name: missing
   entrypoint: whalesay
   templates:
-  - 
+  -
     container:
       args:
       - hello world
@@ -4380,10 +4380,10 @@ metadata:
   selfLink: /apis/argoproj.io/v1alpha1/namespaces/argo/workflows/echo-wngc4
   uid: bed2749b-2971-4172-a61e-455ef02c4379
 spec:
-  
+
   entrypoint: echo
   templates:
-  - 
+  -
     container:
       args:
       - sleep 10 && exit 1
@@ -4456,10 +4456,10 @@ kind: Workflow
 metadata:
   name: echo-r6v49
 spec:
-  
+
   entrypoint: echo
   templates:
-  - 
+  -
     container:
       args:
       - exit 1
@@ -4554,10 +4554,10 @@ kind: Workflow
 metadata:
   name: dag-primay-branch-sd6rg
 spec:
-  
+
   entrypoint: statis
   templates:
-  - 
+  -
     container:
       args:
       - hello world
@@ -4570,7 +4570,7 @@ spec:
     metadata: {}
     name: pass
     outputs: {}
-  - 
+  -
     container:
       args:
       - exit
@@ -4583,20 +4583,20 @@ spec:
     metadata: {}
     name: exit
     outputs: {}
-  - 
+  -
     dag:
       tasks:
-      - 
+      -
         name: A
         template: pass
-      - 
+      -
         dependencies:
         - A
         name: B
         onExit: exit
         template: pass
         when: '{{tasks.A.status}} != Succeeded'
-      - 
+      -
         dependencies:
         - A
         name: C
@@ -4821,7 +4821,7 @@ var workflowStatusMetric = `
 metadata:
   name: retry-to-completion-rngcr
 spec:
-  
+
   entrypoint: retry-to-completion
   metrics:
     prometheus:
@@ -4838,7 +4838,7 @@ spec:
       name: result_counter
       when: ""
   templates:
-  - 
+  -
     container:
       args:
       - import random; import sys; exit_code = random.choice(range(0, 5)); sys.exit(exit_code)
@@ -5272,10 +5272,10 @@ metadata:
   name: resubmit-pending-wf
   namespace: argo
 spec:
-  
+
   entrypoint: resubmit-pending
   templates:
-  - 
+  -
     inputs: {}
     metadata: {}
     name: resubmit-pending
@@ -5464,7 +5464,7 @@ spec:
     outputs:
       parameters:
       - name: my-param
-        valueFrom: 
+        valueFrom:
           path: /my-path
 `)
 	cancel, controller := newController(wf)
@@ -5488,106 +5488,106 @@ spec:
 var globalVarsOnExit = `
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
-metadata: 
+metadata:
   name: hello-world-6gphm-8n22g
   namespace: default
-spec: 
-  arguments: 
-    parameters: 
-      - 
+spec:
+  arguments:
+    parameters:
+      -
         name: message
         value: nononono
-  workflowTemplateRef: 
+  workflowTemplateRef:
     name: hello-world-6gphm
-status: 
-  nodes: 
-    hello-world-6gphm-8n22g: 
+status:
+  nodes:
+    hello-world-6gphm-8n22g:
       displayName: hello-world-6gphm-8n22g
       finishedAt: "2020-07-14T20:45:28Z"
       hostNodeName: minikube
       id: hello-world-6gphm-8n22g
-      inputs: 
-        parameters: 
-          - 
+      inputs:
+        parameters:
+          -
             name: message
             value: nononono
       name: hello-world-6gphm-8n22g
-      outputs: 
-        artifacts: 
-          - 
+      outputs:
+        artifacts:
+          -
             archiveLogs: true
             name: main-logs
-            s3: 
-              accessKeySecret: 
+            s3:
+              accessKeySecret:
                 key: accesskey
                 name: my-minio-cred
               bucket: my-bucket
               endpoint: "minio:9000"
               insecure: true
               key: hello-world-6gphm-8n22g/hello-world-6gphm-8n22g/main.log
-              secretKeySecret: 
+              secretKeySecret:
                 key: secretkey
                 name: my-minio-cred
         exitCode: "0"
       phase: Succeeded
-      resourcesDuration: 
+      resourcesDuration:
         cpu: 2
         memory: 1
       startedAt: "2020-07-14T20:45:25Z"
-      templateRef: 
+      templateRef:
         name: hello-world-6gphm
         template: whalesay
       templateScope: local/hello-world-6gphm-8n22g
       type: Pod
   phase: Running
-  resourcesDuration: 
+  resourcesDuration:
     cpu: 5
     memory: 2
   startedAt: "2020-07-14T20:45:25Z"
-  storedTemplates: 
-    namespaced/hello-world-6gphm/whalesay: 
-      
-      container: 
-        args: 
+  storedTemplates:
+    namespaced/hello-world-6gphm/whalesay:
+
+      container:
+        args:
           - "hello {{inputs.parameters.message}}"
-        command: 
+        command:
           - cowsay
         image: "docker/whalesay:latest"
-      inputs: 
-        parameters: 
-          - 
+      inputs:
+        parameters:
+          -
             name: message
       metadata: {}
       name: whalesay
       outputs: {}
-  storedWorkflowTemplateSpec: 
-    arguments: 
-      parameters: 
-        - 
+  storedWorkflowTemplateSpec:
+    arguments:
+      parameters:
+        -
           name: message
           value: nononono
     entrypoint: whalesay
     onExit: exitContainer
-    templates: 
+    templates:
       - name: whalesay
         container:
           image: "docker/whalesay:latest"
-          args: 
+          args:
             - "hello {{inputs.parameters.message}}"
-          command: 
+          command:
             - cowsay
-        inputs: 
-          parameters: 
+        inputs:
+          parameters:
             - name: message
       - name: exitContainer
         container:
           image: docker/whalesay
-          args: 
+          args:
             - "goodbye {{inputs.parameters.message}}"
-          command: 
+          command:
             - cowsay
-        inputs: 
-          parameters: 
+        inputs:
+          parameters:
             - name: message
 `
 
@@ -5775,8 +5775,8 @@ metadata:
 spec:
   entrypoint: main
   templates:
-  - name: main 
-    steps: 
+  - name: main
+    steps:
     - - name: step1
         template: whalesay
 
@@ -5796,7 +5796,7 @@ metadata:
 spec:
   entrypoint: main
   templates:
-  - name: main 
+  - name: main
     dag:
       tasks:
       - name: dag1
@@ -5942,7 +5942,7 @@ apiVersion: v1
 kind: Pod
 status:
   conditions:
-  - lastProbeTime: 
+  - lastProbeTime:
     lastTransitionTime: '2020-08-27T18:14:19Z'
     status: 'True'
     type: PodScheduled
@@ -6177,9 +6177,9 @@ spec:
 
   # divide-by-2 divides a number in half
   - name: divide-by-2
-    retryStrategy: 
+    retryStrategy:
         limit: 2
-        backoff: 
+        backoff:
             duration: "1"
             factor: 2
     inputs:
@@ -6193,9 +6193,9 @@ spec:
         echo $(({{inputs.parameters.num}}/2))
   # whalesay prints a number using whalesay
   - name: whalesay
-    retryStrategy: 
+    retryStrategy:
         limit: 2
-        backoff: 
+        backoff:
             duration: "1"
             factor: 2
     inputs:
@@ -6235,10 +6235,10 @@ kind: Workflow
 metadata:
   name: parameter-aggregation-dag-h8b82
 spec:
-  
+
   entrypoint: parameter-aggregation
   templates:
-  - 
+  -
     dag:
       tasks:
       - arguments:
@@ -6270,7 +6270,7 @@ spec:
     metadata: {}
     name: parameter-aggregation
     outputs: {}
-  - 
+  -
     container:
       args:
       - |
@@ -6300,7 +6300,7 @@ spec:
       - name: evenness
         valueFrom:
           path: /tmp/even
-  - 
+  -
     container:
       args:
       - '{{inputs.parameters.message}}'
@@ -7972,7 +7972,7 @@ spec:
        - name: pod
          template: pod
    - name: pod
-     container: 
+     container:
        image: my-image
 `)
 	wf.Status.Phase = wfv1.WorkflowError
